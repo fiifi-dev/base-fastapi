@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+fastapi = {extras = ["all"], version = "*"}
+sqlalchemy = "==2.0.4"
+alembic = "==1.9.4"
+mysqlclient = "*"
+passlib = "*"
+pyjwt = "*"
+emails = "*"
+minio = "==7.1.13"
+urllib3 = "==1.26.15"
+python-multipart = "*"
+pillow = "==9.4.0"
+
+[dev-packages]
+
+[requires]
+python_version = "3.10"

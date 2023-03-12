@@ -1,0 +1,16 @@
+services:
+  app:
+    image: registry.flarewebs.com/fiifidev/blog_test
+    restart: always
+    ports:
+      - "8000:80"
+    env_file:
+      - .env.dev
+    networks:
+      - postgres-network
+
+
+networks:
+  postgres-network:
+    external: true
+    name: 'postgres-network'

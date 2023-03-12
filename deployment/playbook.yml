@@ -1,0 +1,119 @@
+---
+- hosts: flarewebs
+  become: yes
+
+  vars:
+    APP_NAME: "blog_test"
+    APP_PORT: "{{ lookup('env','APP_PORT') }}"
+    REGISTRY_USER: "{{ lookup('env','REGISTRY_CRED_USR') }}"
+    REGISTRY_PWD: "{{ lookup('env','REGISTRY_CRED_PSW') }}"
+    SRC_DIR: "{{ lookup('env','WORKSPACE') }}"
+    APP_DIR: "/home/appuser/applications/{{ APP_NAME }}"
+
+    DOMAIN: "blog.flarewebs.com"
+    REGISTRY_URL: "registry.flarewebs.com"
+    IMAGE: "{{ REGISTRY_URL }}/fiifidev/blog_test"
+    CONTAINER_NAME: "blog_test"
+    REPLACE_CONFIG: "yes"
+
+    SECRET_KEY: "{{ lookup('env','SECRET_KEY') }}"
+    DEBUG: "{{ lookup('env','DEBUG') }}"
+    # Database
+    POSTGRES_SERVER: "{{ lookup('env','POSTGRES_SERVER') }}"
+    POSTGRES_USER: "{{ lookup('env','POSTGRES_USER') }}"
+    POSTGRES_PASSWORD: "{{ lookup('env','POSTGRES_PASSWORD') }}"
+    POSTGRES_DB: "{{ lookup('env','POSTGRES_DB') }}"
+    # First User
+    ROOT_USER_EMAIL: "{{ lookup('env','ROOT_USER_EMAIL') }}"
+    ROOT_USER_PASSWORD: "{{ lookup('env','ROOT_USER_PASSWORD') }}"
+    ROOT_USER_FIRST_NAME: "{{ lookup('env','ROOT_USER_FIRST_NAME') }}"
+    # Email
+    SMTP_HOST: "{{ lookup('env','SMTP_HOST') }}"
+    SMTP_PORT: "{{ lookup('env','SMTP_PORT') }}"
+    EMAILS_FROM_EMAIL: "{{ lookup('env','EMAILS_FROM_EMAIL') }}"
+    SMTP_USER: "{{ lookup('env','SMTP_USER') }}"
+    SMTP_PASSWORD: "{{ lookup('env','SMTP_PASSWORD') }}"
+    # Minio
+    USE_MINIO: "{{ lookup('env','USE_MINIO') }}"
+    MINIO_ACCESS_KEY: "{{ lookup('env','MINIO_ACCESS_KEY') }}"
+    MINIO_SECRET_KEY: "{{ lookup('env','MINIO_SECRET_KEY') }}"
+    MINIO_ENDPOINT: "{{ lookup('env','MINIO_ENDPOINT') }}"
+    MINIO_BUCKET: "{{ lookup('env','MINIO_BUCKET') }}"
+
+
+
+  tasks:
+    - name: 1. Creates working directory
+      file:
+        path: "{{ APP_DIR }}"
+        state: directory
+
+
+    - name: 2. Log into private registry and force re-authorization
+      community.docker.docker_login:
+        registry_url: "{{ REGISTRY_URL }}"
+        username: "{{ REGISTRY_USER }}"
+        password: "{{ REGISTRY_PWD }}"
+      delegate_to: localhost
+      become: no
+      register: login_output
+    - debug:
+        var: login_output
+
+    - name: 3. Build an image and push it to a private repo
+      community.docker.docker_image:
+        build:
+          path: "{{ SRC_DIR }}"
+          use_config_proxy: yes
+        name: "{{ IMAGE }}"
+        debug: yes
+        push: true
+        source: build
+      delegate_to: localhost
+      become: no
+      register: build_output
+    - debug:
+        var: build_output
+
+    - name: 4. Synchronize local folder to server
+      ansible.posix.synchronize:
+        src: "{{ SRC_DIR }}/deployment/docker-compose.yml"
+        dest: "{{ APP_DIR }}/docker-compose.yml"
+        perms: "no"
+        rsync_opts:
+          - "--exclude=.git"
+          - "--exclude=.gitignore"
+      register: rsync_output
+    - debug:
+        var: rsync_output
+
+    - name: 5. Create environment variable
+      template:
+        src: "{{ SRC_DIR }}/deployment/env.j2"
+        dest: "{{ APP_DIR }}/.env"
+
+    - name: 6. Run docker-compose up
+      community.docker.docker_compose:
+        project_src: "{{ APP_DIR }}"
+        build: no
+        pull: yes
+        state: present # present or absent
+        recreate: smart # always, never, smart
+        files:
+          - docker-compose.yml
+
+    - name: 7. Create Nginx Config
+      template:
+        src: "{{ SRC_DIR }}/deployment/nginx.conf.j2"
+        dest: "/etc/nginx/conf.d/{{ APP_NAME }}.conf"
+      register: config_output
+      notify: RestartNginx
+      when: REPLACE_CONFIG
+    - debug:
+        var: config_output
+
+  handlers:
+    - name: RestartNginx
+      service:
+        name: nginx
+        state: restarted
