@@ -1,6 +1,6 @@
 services:
   app:
-    image: registry.flarewebs.com/fiifidev/blog_test
+    image: registry.flarewebs.com/fiifidev/api_base
     restart: always
     ports:
       - "8000:80"

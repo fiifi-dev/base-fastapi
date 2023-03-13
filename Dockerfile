@@ -14,7 +14,7 @@ FROM base AS python-deps
 
 # Install pipenv and compilation dependencies
 RUN apk update \
-    && apk add gcc python3-dev musl-dev g++  \
+    && apk add gcc python3-dev musl-dev g++ mariadb-connector-c-dev \
     && pip install pipenv
 
 # Install python dependencies in /.venv
