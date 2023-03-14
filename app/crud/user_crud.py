@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 import sqlalchemy as sa
 from app.core import models, exceptions
 from app.schemas import user_schemas
+from sqlalchemy.dialects import mysql
 from app.core.security import get_password_hash, verify_password
 
 
@@ -35,14 +36,23 @@ class UserCrud(
     ):
         stmt = super().get_sql_stmt(skip=skip, limit=limit)
 
+        # if search is not None:
+        #     stmt = stmt.where(
+        #         sa.or_(
+        #             models.User.email.ilike(search),
+        #             models.User.first_name.ilike(search),
+        #             models.User.last_name.ilike(search),
+        #         )
+        #     )
+
         if search is not None:
-            stmt = stmt.where(
-                sa.or_(
-                    models.User.email.ilike(search),
-                    models.User.first_name.ilike(search),
-                    models.User.last_name.ilike(search),
-                )
+            match_expr = mysql.match(
+                models.User.email,
+                models.User.first_name,
+                models.User.last_name,
+                against=search,
             )
+            stmt = stmt.where(match_expr.in_natural_language_mode())
 
         if is_verified is not None:
             stmt = stmt.where(models.User.is_verified == is_verified)
@@ -161,7 +171,7 @@ class UserCrud(
 
         stmt = (
             sa.update(models.User)
-            .where(models.User.email == instance.id)
+            .where(models.User.email == instance.email)
             .values(
                 hashed_password=get_password_hash(password),
             )

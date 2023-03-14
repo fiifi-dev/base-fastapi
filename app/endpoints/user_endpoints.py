@@ -122,13 +122,13 @@ def create_admin(
     "/create-admin-complete",
     response_model=general_schemas.MessageSchema,
 )
-def register_admin(
-    user_id: str,
+def create_admin_complete(
+    uid: str,
     token: str,
     item: user_schemas.RegisterUserSchema,
     db: Session = Depends(dependencies.get_db),
 ):
-    user = user_crud.crud.read_one(db, id=user_id)
+    user = user_crud.crud.read_one(db, id=uid)
 
     if not user:
         raise exceptions.BadRequest(f"Account does not exist")

@@ -63,6 +63,16 @@ class User(Base):
         default=sa.func.now(),
     )
 
+    idx_email_name = sa.Index(
+        "idx_email_name",
+        email,
+        last_name,
+        first_name,
+        mydialect_length=5,
+        mysql_prefix="FULLTEXT",
+        mariadb_prefix="FULLTEXT",
+    )
+
 
 class Store(Base):
     link: orm.Mapped[str] = orm.mapped_column(

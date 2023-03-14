@@ -47,12 +47,13 @@ def login_access_token(
     }
 
 
-@router.get("/reset_password", response_model=general_schemas.MessageSchema)
+@router.post("/reset_password", response_model=general_schemas.MessageSchema)
 def reset_password(
     background_tasks: BackgroundTasks,
-    email: str = Body(..., embed=True),
+    email: EmailStr = Body(..., embed=True),
     db: Session = Depends(dependencies.get_db),
 ):
+    print("hello world")
     user = user_crud.crud.get_by_email(db, email=email)
 
     if user is None:
@@ -76,14 +77,14 @@ def reset_password(
 @router.post("/reset-password-complete/", response_model=general_schemas.MessageSchema)
 def reset_password_complete(
     token: str,
-    email: str,
+    uid: int,
     item: user_schemas.ResetUserPasswordSchema,
     db: Session = Depends(dependencies.get_db),
 ) -> Any:
     """
     Reset password
     """
-    user = user_crud.crud.get_by_email(db, email=email)
+    user = user_crud.crud.read_one(db, id=uid)
 
     if user is None:
         raise exceptions.NotFound(detail="This account does not exist")
