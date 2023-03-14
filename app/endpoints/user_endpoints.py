@@ -7,11 +7,11 @@ from pydantic import EmailStr
 from sqlalchemy.orm import Session
 
 
-from core import dependencies, exceptions, models, security, permissions
-from core.config import settings
-from crud import user_crud
-from schemas import user_schemas
-from helpers import general_schemas, emails, utils
+from app.core import dependencies, exceptions, models, security, permissions
+from app.core.config import settings
+from app.crud import user_crud
+from app.schemas import user_schemas
+from app.helpers import general_schemas, emails, utils
 
 router = APIRouter()
 

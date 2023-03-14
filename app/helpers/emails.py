@@ -4,9 +4,9 @@ from typing import Any
 
 import emails
 from emails.template import JinjaTemplate
-from core import models
+from app.core import models
 
-from core.config import settings
+from app.core.config import settings
 
 
 def get_template_str(template_filename: str):

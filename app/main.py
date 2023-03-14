@@ -7,10 +7,10 @@ from starlette.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 
-from core import management, database
-from core.config import settings
-from helpers import general_schemas
-from endpoints import auth_endpoints, user_endpoints, store_endpoints
+from app.core import management, database
+from app.core.config import settings
+from app.helpers import general_schemas
+from app.endpoints import auth_endpoints, user_endpoints, store_endpoints
 
 app = FastAPI(
     title=settings.PROJECT_NAME,

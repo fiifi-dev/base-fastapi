@@ -6,11 +6,11 @@ from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import AnyHttpUrl, EmailStr
 from sqlalchemy.orm import Session
 
-from core import dependencies, exceptions, models, security
-from core.config import settings
-from crud import user_crud
-from schemas import user_schemas
-from helpers import general_schemas, utils, emails
+from app.core import dependencies, exceptions, models, security
+from app.core.config import settings
+from app.crud import user_crud
+from app.schemas import user_schemas
+from app.helpers import general_schemas, utils, emails
 
 router = APIRouter()
 

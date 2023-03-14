@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
-from core.config import settings
+from app.core.config import settings
 
-from core.security import ALGORITHM
+from app.core.security import ALGORITHM
 import jwt
 import re
 

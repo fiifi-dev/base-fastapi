@@ -1,11 +1,11 @@
 import logging
 from sqlalchemy.orm import Session
 
-from core.config import settings
-from core import database
-from helpers import storage
+from app.core.config import settings
+from app.core import database
+from app.helpers import storage
 import sqlalchemy_utils
-from crud import user_crud
+from app.crud import user_crud
 
 
 def create_first_user(db: Session):

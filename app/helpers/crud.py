@@ -4,7 +4,7 @@ from typing import Any, Generic, Type, TypeVar
 from fastapi.encoders import jsonable_encoder
 from fastapi import status, exceptions
 from pydantic import BaseModel
-from core.models import Base
+from app.core.models import Base
 
 
 ModelT = TypeVar("ModelT", bound=Base)

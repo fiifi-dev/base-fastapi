@@ -9,7 +9,7 @@ import mimetypes
 import minio
 from datetime import timedelta
 from minio import Minio
-from core.config import settings
+from app.core.config import settings
 from fastapi import UploadFile
 
 

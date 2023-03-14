@@ -1,4 +1,4 @@
-from core import models, exceptions
+from app.core import models, exceptions
 
 
 def is_superuser_or_owner(current_user: models.User, object_id: int | str):

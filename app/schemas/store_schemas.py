@@ -1,6 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel, validator
-from helpers import storage
+from app.helpers import storage
 
 
 class CreateStoreSchema(BaseModel):

@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, BackgroundTasks, UploadFile
 from sqlalchemy.orm import Session
-from core import dependencies
-from schemas import store_schemas
-from helpers import files, general_schemas, storage
-from crud import store_crud
+from app.core import dependencies
+from app.schemas import store_schemas
+from app.helpers import files, general_schemas, storage
+from app.crud import store_crud
 
 router = APIRouter()
 

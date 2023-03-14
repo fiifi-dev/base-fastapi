@@ -1,6 +1,6 @@
 import pathlib
 from fastapi import UploadFile, BackgroundTasks
-from helpers import storage
+from app.helpers import storage
 
 
 def upload_file(

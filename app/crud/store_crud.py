@@ -1,7 +1,7 @@
-from helpers.crud import BaseCrud
+from app.helpers.crud import BaseCrud
 import sqlalchemy as sa
-from core import models
-from schemas import store_schemas
+from app.core import models
+from app.schemas import store_schemas
 
 
 class StoreCrud(
