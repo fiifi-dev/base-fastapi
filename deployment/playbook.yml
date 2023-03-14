@@ -10,16 +10,20 @@
     SRC_DIR: "{{ lookup('env','WORKSPACE') }}"
     APP_DIR: "/home/appuser/applications/{{ APP_NAME }}"
 
-    DOMAIN: "blog.flarewebs.com"
+    DOMAIN: "fastapi.flarewebs.com"
     REGISTRY_URL: "registry.flarewebs.com"
-    IMAGE: "{{ REGISTRY_URL }}/fiifidev/blog_test"
+    IMAGE: "{{ REGISTRY_URL }}/fiifidev/api_base"
     CONTAINER_NAME: "blog_test"
     REPLACE_CONFIG: "yes"
 
     SECRET_KEY: "{{ lookup('env','SECRET_KEY') }}"
     DEBUG: "{{ lookup('env','DEBUG') }}"
     # Database
-    DATABASE_URL: "{{ lookup('env','DATABASE_URL') }}"
+    MYSQL_USER: "{{ lookup('env','MYSQL_USER') }}"
+    MYSQL_HOST: "{{ lookup('env','MYSQL_HOST') }}"
+    MYSQL_PASSWORD: "{{ lookup('env','MYSQL_PASSWORD') }}"
+    MYSQL_DATABASE: "{{ lookup('env','MYSQL_DATABASE') }}"
+    DATABASE_URL: "mysql://{{ MYSQL_USER }}:{{ MYSQL_PASSWORD }}@{{ MYSQL_HOST }}:3306/{{ MYSQL_DATABASE }}"
     # First User
     ROOT_USER_EMAIL: "{{ lookup('env','ROOT_USER_EMAIL') }}"
     ROOT_USER_PASSWORD: "{{ lookup('env','ROOT_USER_PASSWORD') }}"

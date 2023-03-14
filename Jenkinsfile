@@ -10,7 +10,10 @@ pipeline {
     SECRET_KEY="$SECRET_KEY"
     DEBUG="$DEBUG"
     // Database
-    DATABASE_URL="mysql://root:testpass123@127.0.0.1:3306/student_management_system"
+    MYSQL_USER="$MYSQL_USER"
+    MYSQL_HOST="$MYSQL_HOST"
+    MYSQL_PASSWORD=credentials('mysql_password')
+    MYSQL_DATABASE="$MYSQL_DATABASE"
     // First User
     ROOT_USER_EMAIL="$ROOT_USER_EMAIL"
     ROOT_USER_PASSWORD="$ROOT_USER_PASSWORD"

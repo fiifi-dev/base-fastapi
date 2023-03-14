@@ -1,4 +1,13 @@
 {
-  "cSpell.words": ["ilike", "Minio", "passlib", "starlette", "testpass"],
+  "cSpell.words": [
+    "appuser",
+    "fiifidev",
+    "ilike",
+    "Minio",
+    "passlib",
+    "posix",
+    "starlette",
+    "testpass"
+  ],
   "python.analysis.typeCheckingMode": "basic"
 }
