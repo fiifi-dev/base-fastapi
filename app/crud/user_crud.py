@@ -23,7 +23,7 @@ class UserCrud(
         user_schemas.UpdateUserSchema,
     ]
 ):
-    def get_sql_stmt(
+    def _get_sql_stmt(
         self,
         *,
         skip: int,
@@ -34,7 +34,7 @@ class UserCrud(
         order_by: OrderUserBy = OrderUserBy.date_joined,
         desc: bool | None = False,
     ):
-        stmt = super().get_sql_stmt(skip=skip, limit=limit)
+        stmt = super()._get_sql_stmt(skip=skip, limit=limit)
 
         # if search is not None:
         #     stmt = stmt.where(
@@ -85,7 +85,7 @@ class UserCrud(
         order_by: OrderUserBy = OrderUserBy.date_joined,
         desc: bool | None = False,
     ):
-        stmt = self.get_sql_stmt(
+        stmt = self._get_sql_stmt(
             skip=skip,
             limit=limit,
             search=search,
@@ -94,7 +94,7 @@ class UserCrud(
             order_by=order_by,
             desc=desc,
         )
-        return super().get_list(db, query=stmt, skip=skip, limit=limit)
+        return super()._get_list(db, query=stmt, skip=skip, limit=limit)
 
     def get_by_email(self, db: Session, *, email: Any) -> models.User | None:
         stmt = sa.select(models.User).where(models.User.email == email)
@@ -209,7 +209,7 @@ class UserCrud(
 
     def update_toggle_active(self, db: Session, *, id: str):
 
-        user = self.get_object(db, id=id)
+        user = self._get_object(db, id=id)
 
         stmt = (
             sa.update(models.User)

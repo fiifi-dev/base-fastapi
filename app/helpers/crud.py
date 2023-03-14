@@ -16,8 +16,11 @@ class BaseCrud(Generic[ModelT, CreateSchemaT, UpdateSchemaT]):
     def __init__(self, model: Type[ModelT]):
         self.model = model
 
-    def get_object(self, db: Session, *, id: int | str) -> ModelT:
-        stmt = sa.select(self.model).where(self.model.id == id)
+    def __get_object_stmt(self, id: int | str):
+        return sa.select(self.model).where(self.model.id == id)
+
+    def _get_object(self, db: Session, *, id: int | str) -> ModelT:
+        stmt = self.__get_object_stmt(id)
         obj = db.scalar(stmt)
 
         if obj is None:
@@ -28,10 +31,10 @@ class BaseCrud(Generic[ModelT, CreateSchemaT, UpdateSchemaT]):
 
         return obj
 
-    def get_sql_stmt(self, *, skip: int, limit: int):
+    def _get_sql_stmt(self, *, skip: int, limit: int):
         return sa.select(self.model).offset(skip).limit(limit)
 
-    def get_list(
+    def _get_list(
         self,
         db: Session,
         *,
@@ -59,11 +62,11 @@ class BaseCrud(Generic[ModelT, CreateSchemaT, UpdateSchemaT]):
         }
 
     def read_one(self, db: Session, *, id: int | str):
-        return self.get_object(db, id=id)
+        return self._get_object(db, id=id)
 
     def read_list(self, db: Session, *, skip: int = 0, limit: int = 20):
-        stmt = self.get_sql_stmt(skip=skip, limit=limit)
-        return self.get_list(db, query=stmt, skip=skip, limit=limit)
+        stmt = self._get_sql_stmt(skip=skip, limit=limit)
+        return self._get_list(db, query=stmt, skip=skip, limit=limit)
 
     def create(self, db: Session, create_schema: CreateSchemaT) -> ModelT | None:
         stmt = sa.insert(self.model).values(**create_schema.dict())
@@ -76,7 +79,7 @@ class BaseCrud(Generic[ModelT, CreateSchemaT, UpdateSchemaT]):
     def update(
         self, db: Session, *, id: int | str, update_schema: UpdateSchemaT
     ) -> ModelT | None:
-        instance = self.get_object(db, id=id)
+        instance = self._get_object(db, id=id)
 
         stmt = (
             sa.update(self.model)
@@ -89,7 +92,7 @@ class BaseCrud(Generic[ModelT, CreateSchemaT, UpdateSchemaT]):
         return instance
 
     def destroy(self, db: Session, *, id: int | str) -> ModelT | None:
-        instance = self.get_object(db, id=id)
+        instance = self._get_object(db, id=id)
 
         stmt = sa.delete(self.model).where(self.model.id == instance.id)
         db.execute(stmt)

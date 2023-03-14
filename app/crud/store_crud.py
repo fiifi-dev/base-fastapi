@@ -11,10 +11,10 @@ class StoreCrud(
         store_schemas.CreateStoreSchema,
     ]
 ):
-    def get_sql_stmt(self, *, skip: int, limit: int):
+    def _get_sql_stmt(self, *, skip: int, limit: int):
         return (
             super()
-            .get_sql_stmt(skip=skip, limit=limit)
+            ._get_sql_stmt(skip=skip, limit=limit)
             .order_by(models.Store.created_at.desc())
         )
 
