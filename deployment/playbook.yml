@@ -89,7 +89,16 @@
         src: "{{ SRC_DIR }}/deployment/env.j2"
         dest: "{{ APP_DIR }}/.env"
 
-    - name: 6. Run docker-compose up
+    - name: 6. Log into private registry on server and force re-authorization
+      community.docker.docker_login:
+        registry_url: "{{ REGISTRY_URL }}"
+        username: "{{ REGISTRY_USER }}"
+        password: "{{ REGISTRY_PWD }}"
+      register: server_login_output
+    - debug:
+        var: server_login_output
+
+    - name: 7. Run docker-compose up
       community.docker.docker_compose:
         project_src: "{{ APP_DIR }}"
         build: no
@@ -99,7 +108,7 @@
         files:
           - docker-compose.yml
 
-    - name: 7. Create Nginx Config
+    - name: 8. Create Nginx Config
       template:
         src: "{{ SRC_DIR }}/deployment/nginx.conf.j2"
         dest: "/etc/nginx/conf.d/{{ APP_NAME }}.conf"
