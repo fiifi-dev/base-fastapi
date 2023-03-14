@@ -3,7 +3,7 @@
   become: yes
 
   vars:
-    APP_NAME: "blog_test"
+    APP_NAME: "fastapi-base"
     APP_PORT: "{{ lookup('env','APP_PORT') }}"
     REGISTRY_USER: "{{ lookup('env','REGISTRY_CRED_USR') }}"
     REGISTRY_PWD: "{{ lookup('env','REGISTRY_CRED_PSW') }}"
@@ -13,7 +13,7 @@
     DOMAIN: "fastapi.flarewebs.com"
     REGISTRY_URL: "registry.flarewebs.com"
     IMAGE: "{{ REGISTRY_URL }}/fiifidev/api_base"
-    CONTAINER_NAME: "blog_test"
+    CONTAINER_NAME: "fastapi-base"
     REPLACE_CONFIG: "yes"
 
     SECRET_KEY: "{{ lookup('env','SECRET_KEY') }}"
