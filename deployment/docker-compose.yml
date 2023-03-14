@@ -7,9 +7,9 @@ services:
     env_file:
       - .env
     networks:
-      - postgres-network
+      - db-network
 
 networks:
-  postgres-network:
+  db-network:
     external: true
-    name: 'postgres-network'
+    name: 'db-network'

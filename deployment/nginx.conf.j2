@@ -1,17 +1,26 @@
-upstream blog-server {
+upstream fastapi-base {
     server localhost:{{APP_PORT}};
 }
 
-
 server {
-  server_name {{DOMAIN}};
-  client_max_body_size 100M;
+  listen 443 ssl;
+  server_name  {{DOMAIN}}};
+
+  ssl_certificate     /etc/letsencrypt/live/flarewebs.com/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/flarewebs.com/privkey.pem;
+
+  # logging
+  access_log /var/log/nginx/{{DOMAIN}}.access.log;
+  error_log /var/log/nginx/{{DOMAIN}}.error.log warn;
 
   location / {
-    proxy_pass http://blog-server;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header Host $host;
-    proxy_redirect off;
+     proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_redirect off;
+        proxy_pass http://meilisearch;
   }
+
 }
 

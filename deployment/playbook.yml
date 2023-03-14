@@ -19,14 +19,10 @@
     SECRET_KEY: "{{ lookup('env','SECRET_KEY') }}"
     DEBUG: "{{ lookup('env','DEBUG') }}"
     # Database
-    POSTGRES_SERVER: "{{ lookup('env','POSTGRES_SERVER') }}"
-    POSTGRES_USER: "{{ lookup('env','POSTGRES_USER') }}"
-    POSTGRES_PASSWORD: "{{ lookup('env','POSTGRES_PASSWORD') }}"
-    POSTGRES_DB: "{{ lookup('env','POSTGRES_DB') }}"
+    DATABASE_URL: "{{ lookup('env','DATABASE_URL') }}"
     # First User
     ROOT_USER_EMAIL: "{{ lookup('env','ROOT_USER_EMAIL') }}"
     ROOT_USER_PASSWORD: "{{ lookup('env','ROOT_USER_PASSWORD') }}"
-    ROOT_USER_FIRST_NAME: "{{ lookup('env','ROOT_USER_FIRST_NAME') }}"
     # Email
     SMTP_HOST: "{{ lookup('env','SMTP_HOST') }}"
     SMTP_PORT: "{{ lookup('env','SMTP_PORT') }}"
@@ -40,14 +36,11 @@
     MINIO_ENDPOINT: "{{ lookup('env','MINIO_ENDPOINT') }}"
     MINIO_BUCKET: "{{ lookup('env','MINIO_BUCKET') }}"
 
-
-
   tasks:
     - name: 1. Creates working directory
       file:
         path: "{{ APP_DIR }}"
         state: directory
-
 
     - name: 2. Log into private registry and force re-authorization
       community.docker.docker_login:

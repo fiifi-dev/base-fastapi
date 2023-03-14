@@ -1,3 +1,4 @@
+import logging
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -6,10 +7,9 @@ from starlette.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 
-from core import config, management, database
+from core import management, database
 from core.config import settings
-from helpers import general_schemas, storage
-from helpers.storage import MinioStorage
+from helpers import general_schemas
 from endpoints import auth_endpoints, user_endpoints, store_endpoints
 
 app = FastAPI(
@@ -60,6 +60,11 @@ def validation_exception_handler(
 
 
 @app.on_event("startup")
+async def create_database():
+    management.create_database()
+
+
+@app.on_event("startup")
 async def create_first_user():
     db: Session = database.SessionLocal()
     try:
@@ -70,9 +75,7 @@ async def create_first_user():
 
 @app.on_event("startup")
 async def create_minio_bucket():
-    if settings.USE_MINIO:
-        storage = MinioStorage()
-        storage.check_bucket_existence()
+    management.create_minio_bucket()
 
 
 @app.get("/")

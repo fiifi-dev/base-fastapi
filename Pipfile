@@ -15,6 +15,9 @@ minio = "==7.1.13"
 urllib3 = "==1.26.15"
 python-multipart = "*"
 pillow = "==9.4.0"
+sqlalchemy-utils = "==0.40.0"
+uvicorn = {extras = ["standard"], version = "*"}
+gunicorn = "*"
 
 [dev-packages]
 
