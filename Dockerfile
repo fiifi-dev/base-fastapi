@@ -14,7 +14,7 @@ FROM base AS python-deps
 
 # Install pipenv and compilation dependencies
 RUN apk update \
-    && apk add gcc python3-dev musl-dev g++ mariadb-connector-c-dev \
+    && apk add gcc python3-dev musl-dev g++ mariadb-connector-c-dev  \
     && pip install pipenv
 
 # Install python dependencies in /.venv
@@ -23,6 +23,8 @@ COPY Pipfile.lock .
 RUN PIPENV_VENV_IN_PROJECT=1 pipenv install --deploy
 
 FROM base AS runtime
+
+RUN apk add mariadb-connector-c
 
 # Copy virtual env from python-deps stage
 COPY --from=python-deps /.venv /.venv
