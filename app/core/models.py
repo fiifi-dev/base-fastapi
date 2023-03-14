@@ -13,7 +13,7 @@ class Base(orm.DeclarativeBase):
 class User(Base):
     email: orm.Mapped[str] = orm.mapped_column(
         sa.String(150),
-        nullable=True,
+        unique=True,
     )
 
     hashed_password: orm.Mapped[str] = orm.mapped_column(sa.String(200))

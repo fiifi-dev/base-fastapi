@@ -63,13 +63,18 @@ async def create_first_user():
     db: Session = database.SessionLocal()
     try:
         management.create_first_user(db)
+    except Exception as e:
+        pass
     finally:
         db.close()
 
 
 @app.on_event("startup")
 async def create_minio_bucket():
-    management.create_minio_bucket()
+    try:
+        management.create_minio_bucket()
+    except:
+        pass
 
 
 @app.get("/")
