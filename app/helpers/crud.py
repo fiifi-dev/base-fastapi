@@ -68,8 +68,15 @@ class BaseCrud(Generic[ModelT, CreateSchemaT, UpdateSchemaT]):
         stmt = self._get_sql_stmt(skip=skip, limit=limit)
         return self._get_list(db, query=stmt, skip=skip, limit=limit)
 
-    def create(self, db: Session, create_schema: CreateSchemaT) -> ModelT | None:
-        stmt = sa.insert(self.model).values(**create_schema.dict())
+    def create(
+        self, db: Session, create_schema: CreateSchemaT | dict[str, Any]
+    ) -> ModelT | None:
+        data = (
+            create_schema
+            if isinstance(create_schema, "dict")
+            else create_schema.dict(exclude_unset=True)
+        )
+        stmt = sa.insert(self.model).values(**data)
         item = db.execute(stmt)
         db.commit()
 
@@ -77,15 +84,19 @@ class BaseCrud(Generic[ModelT, CreateSchemaT, UpdateSchemaT]):
         return db.scalar(sa.select(self.model).where(self.model.id == pk))
 
     def update(
-        self, db: Session, *, id: int | str, update_schema: UpdateSchemaT
+        self,
+        db: Session,
+        *,
+        id: int | str,
+        update_schema: UpdateSchemaT | dict[str, Any]
     ) -> ModelT | None:
         instance = self._get_object(db, id=id)
-
-        stmt = (
-            sa.update(self.model)
-            .where(self.model.id == instance.id)
-            .values(**update_schema.dict(exclude_unset=True))
+        data = (
+            update_schema
+            if isinstance(update_schema, "dict")
+            else update_schema.dict(exclude_unset=True)
         )
+        stmt = sa.update(self.model).where(self.model.id == instance.id).values(**data)
         db.execute(stmt)
         db.commit()
         db.refresh(instance)
