@@ -104,7 +104,7 @@ class BaseCrud(Generic[ModelT, CreateSchemaT, UpdateSchemaT]):
         db.refresh(instance)
         return instance, old_instance
 
-    def destroy(self, db: Session, *, id: int | str) -> ModelT | None:
+    def destroy(self, db: Session, *, id: int | str) -> ModelT:
         instance = self._get_object(db, id=id)
 
         stmt = sa.delete(self.model).where(self.model.id == instance.id)
