@@ -69,11 +69,11 @@ def update_store(
 
     data = files.upload_file(file, loc, background_tasks, True)
     store_schema = store_schemas.CreateStoreSchema(**data)
-    res = store_crud.crud.update(
+    obj = store_crud.crud.update(
         db,
         update_schema=store_schema,
         id=store_id,
-    )
+    )[0]
 
     background_tasks.add_task(
         minio_storage.delete,
@@ -86,7 +86,7 @@ def update_store(
             object_path=store.thumb,
         )
 
-    return res
+    return obj
 
 
 @router.get(

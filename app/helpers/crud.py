@@ -1,4 +1,5 @@
 import sqlalchemy as sa
+import copy
 from sqlalchemy.orm import Session
 from typing import Any, Generic, Type, TypeVar
 from fastapi.encoders import jsonable_encoder
@@ -89,8 +90,9 @@ class BaseCrud(Generic[ModelT, CreateSchemaT, UpdateSchemaT]):
         *,
         id: int | str,
         update_schema: UpdateSchemaT | dict[str, Any]
-    ) -> ModelT | None:
+    ) -> tuple[ModelT, ModelT]:
         instance = self._get_object(db, id=id)
+        old_instance = copy.deepcopy(instance)
         data = (
             update_schema
             if isinstance(update_schema, "dict")
@@ -100,7 +102,7 @@ class BaseCrud(Generic[ModelT, CreateSchemaT, UpdateSchemaT]):
         db.execute(stmt)
         db.commit()
         db.refresh(instance)
-        return instance
+        return instance, old_instance
 
     def destroy(self, db: Session, *, id: int | str) -> ModelT | None:
         instance = self._get_object(db, id=id)

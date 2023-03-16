@@ -162,7 +162,7 @@ def update_user(
     if instance is None:
         raise exceptions.NotFound()
 
-    return user_crud.crud.update(db, id=user_id, update_schema=item)
+    return user_crud.crud.update(db, id=user_id, update_schema=item)[0]
 
 
 @router.get(
