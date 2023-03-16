@@ -13,7 +13,16 @@ from app.core.config import settings
 from fastapi import UploadFile
 
 
-class MinioStorage:
+class Singleton(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super().__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
+class MinioStorage(metaclass=Singleton):
     def __init__(self):
         self.client = Minio(
             settings.MINIO_ENDPOINT,
@@ -85,7 +94,7 @@ class MinioStorage:
             return f"{self.endpoint}/{self.bucket}/{object_path}"
 
         try:
-            u = self.client.presigned__get_object(
+            u = self.client.presigned_get_object(
                 bucket_name=self.bucket,
                 object_name=object_path.encode("utf-8"),
                 expires=timedelta(
@@ -106,7 +115,7 @@ class MinioStorage:
             )
         try:
 
-            res = self.client._get_object(self.bucket, object_path, **kwargs)
+            res = self.client.get_object(self.bucket, object_path, **kwargs)
             content_bytes: io.BytesIO = io.BytesIO(res.read())
             content_length: int = len(content_bytes.getvalue())
 
